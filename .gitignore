@@ -1,0 +1,28 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# VS Code settings
+.vscode/
+
+# Sequelize CLI config (berisi kredensial sensitif)
+src/config/config.json
+
+# Coverage & test output
+coverage/
+*.lcov
+
+# Misc
+dist/
+build/
