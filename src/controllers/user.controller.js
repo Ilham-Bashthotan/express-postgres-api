@@ -1,4 +1,6 @@
 const userService = require('../services/user.service');
+const AppError = require("../utils/AppError");
+
 exports.create = async (req, res) => {
     try {
         // 1. Ekstrak data dari request body
@@ -25,19 +27,18 @@ exports.findAll = async (req, res) => {
     }
 };
 
-exports.findOne = async (req, res) => {
-    try {
-        const userId = req.params.id;
-        const user = await userService.findUserById(userId);
-
-        if (user) {
-            res.status(200).json(user);
-        } else {
-            res.status(404).json({ message: `Pengguna dengan id=${userId} tidak ditemukan.` });
-        }
-    } catch (error) {
-        next(error);
-    }
+exports.findOne = async (req, res, next) => {
+	try {
+		const user = await userService.findUserById(req.params.id);
+		if (!user) {
+			// Delegasikan error operasional ke handler global
+			return next(new AppError("User not found with that ID", 404));
+		}
+		res.status(200).json(user);
+	} catch (error) {
+		// Delegasikan error tak terduga ke handler global
+		next(error);
+	}
 };
 
 exports.update = async (req, res) => {
