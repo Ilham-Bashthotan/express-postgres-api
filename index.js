@@ -1,6 +1,6 @@
-const express = require('express');
-const db = require('./src/models'); // Impor dari folder models
-const userRoutes = require('./src/routes/user.routes');
+const express = require("express");
+const db = require("./src/models"); // Impor dari folder models
+const userRoutes = require("./src/routes/user.routes");
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -11,16 +11,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Route sederhana untuk pengujian awal
-app.get('/', (req, res) => {
-    res.json({ message: 'Selamat datang di API aplikasi.' });
+app.get("/", (req, res) => {
+	res.json({ message: "Selamat datang di API aplikasi." });
 });
 
-app.use('/api/users', userRoutes);
-
+app.use("/api/users", userRoutes);
 
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Terjadi kesalahan pada server!');
+	console.error(err.stack);
+	res.status(500).send("Terjadi kesalahan pada server!");
 });
 
 // Mendaftarkan user routes dengan prefiks /api/users
@@ -28,17 +27,17 @@ app.use((err, req, res, next) => {
 // Sinkronisasi database (opsional, lebih baik menggunakan migrasi di produksi)
 // db.sequelize.sync();
 app.listen(port, () => {
-    console.log(`Server berjalan di http://localhost:${port}`);
+	console.log(`Server berjalan di http://localhost:${port}`);
 });
 
 // Uji koneksi database
 async function testDbConnection() {
-    try {
-        await db.sequelize.authenticate();
-        console.log('Koneksi ke database berhasil terkoneksi.');
-    } catch (error) {
-        console.error('Tidak dapat terhubung ke database:', error);
-    }
+	try {
+		await db.sequelize.authenticate();
+		console.log("Koneksi ke database berhasil terkoneksi.");
+	} catch (error) {
+		console.error("Tidak dapat terhubung ke database:", error);
+	}
 }
 
 testDbConnection();
@@ -47,4 +46,3 @@ testDbConnection();
 
 // Sinkronisasi database (opsional, lebih baik menggunakan migrasi di produksi)
 // db.sequelize.sync();
-

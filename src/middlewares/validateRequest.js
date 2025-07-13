@@ -5,7 +5,7 @@ const validateRequest = (schema, property = "body") => {
 			abortEarly: false, // Laporkan semua kesalahan, bukan hanya yang pertama
 			stripUnknown: true, // Hapus properti yang tidak ada dalam skema
 		});
-        
+
 		if (error) {
 			const errorDetails = error.details.map((detail) => detail.message);
 			// Nanti kita akan refactor ini untuk menggunakan error handler terpusat
