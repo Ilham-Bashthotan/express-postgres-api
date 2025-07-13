@@ -1,28 +1,22 @@
 const userService = require("../services/user.service");
 const AppError = require("../utils/AppError");
 
-exports.create = async (req, res) => {
+exports.create = async (req, res, next) => {
 	try {
-		// 1. Ekstrak data dari request body
 		const userData = req.body;
-
-		// 2. Panggil service untuk membuat pengguna baru
 		const newUser = await userService.createUser(userData);
-
-		// 3. Kirim respons sukses dengan status 201 (Created)
 		res.status(201).json(newUser);
 	} catch (error) {
-		// Jika terjadi error di service, kirim respons error
-		next(error);
+		next(new AppError(error.message, 400));
 	}
 };
 
-exports.findAll = async (req, res) => {
+exports.findAll = async (req, res, next) => {
 	try {
 		const users = await userService.findAllUsers();
 		res.status(200).json(users);
 	} catch (error) {
-		next(error);
+		next(new AppError(error.message, 500));
 	}
 };
 
@@ -30,35 +24,31 @@ exports.findOne = async (req, res, next) => {
 	try {
 		const user = await userService.findUserById(req.params.id);
 		if (!user) {
-			// Delegasikan error operasional ke handler global
 			return next(new AppError("User not found with that ID", 404));
 		}
 		res.status(200).json(user);
 	} catch (error) {
-		// Delegasikan error tak terduga ke handler global
-		next(error);
+		next(new AppError(error.message, 500));
 	}
 };
 
-exports.update = async (req, res) => {
+exports.update = async (req, res, next) => {
 	try {
 		const userId = req.params.id;
 		const updateData = req.body;
 		const updatedUser = await userService.updateUser(userId, updateData);
-
 		res.status(200).json(updatedUser);
 	} catch (error) {
-		res.status(404).json({ message: error.message });
+		next(new AppError(error.message, 404));
 	}
 };
 
-exports.delete = async (req, res) => {
+exports.delete = async (req, res, next) => {
 	try {
 		const userId = req.params.id;
-
 		await userService.deleteUser(userId);
-		res.status(204).send(); // 204 No Content adalah respons standar untuk delete yang sukses
+		res.status(204).send();
 	} catch (error) {
-		res.status(404).json({ message: error.message });
+		next(new AppError(error.message, 404));
 	}
 };

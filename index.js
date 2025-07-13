@@ -1,31 +1,31 @@
 const express = require("express");
-const db = require("./src/models"); // Impor dari folder models
+const db = require("./src/models");
 const userRoutes = require("./src/routes/user.routes");
+const AppError = require("./src/utils/AppError");
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Middleware untuk mem-parsing request body JSON
 app.use(express.json());
-
-// Middleware untuk mem-parsing request body URL-encoded
 app.use(express.urlencoded({ extended: true }));
 
-// Route sederhana untuk pengujian awal
 app.get("/", (req, res) => {
 	res.json({ message: "Selamat datang di API aplikasi." });
 });
 
+// Mendaftarkan user routes dengan prefiks /api/users
 app.use("/api/users", userRoutes);
 
+// Error handler terpusat
 app.use((err, req, res, next) => {
 	console.error(err.stack);
-	res.status(500).send("Terjadi kesalahan pada server!");
+	const statusCode = err.statusCode || 500;
+	const message = err.message || "Terjadi kesalahan pada server!";
+	res.status(statusCode).json({ status: err.status || "error", message });
 });
-
-// Mendaftarkan user routes dengan prefiks /api/users
 
 // Sinkronisasi database (opsional, lebih baik menggunakan migrasi di produksi)
 // db.sequelize.sync();
+
 app.listen(port, () => {
 	console.log(`Server berjalan di http://localhost:${port}`);
 });
@@ -41,8 +41,3 @@ async function testDbConnection() {
 }
 
 testDbConnection();
-
-// Mendaftarkan user routes dengan prefiks /api/users
-
-// Sinkronisasi database (opsional, lebih baik menggunakan migrasi di produksi)
-// db.sequelize.sync();
