@@ -1,54 +1,88 @@
 const userService = require("../services/user.service");
-const AppError = require("../utils/AppError");
 
 exports.create = async (req, res, next) => {
 	try {
 		const userData = req.body;
 		const newUser = await userService.createUser(userData);
-		res.status(201).json(newUser);
+
+		res.status(201).json({
+			status: "ok",
+			statusCode: 201,
+			message: "Data pengguna berhasil dibuat",
+			data: newUser,
+		});
 	} catch (error) {
-		next(new AppError(error.message, 400));
+		// res.status(500).json({ message: error.message });
+		next(error);
 	}
 };
 
-exports.findAll = async (req, res, next) => {
+exports.findAll = async (req, res) => {
 	try {
 		const users = await userService.findAllUsers();
-		res.status(200).json(users);
+
+		res.status(200).json({
+			status: "ok",
+			statusCode: 200,
+			message: "Data pengguna berhasil diambil",
+			data: users,
+		});
 	} catch (error) {
-		next(new AppError(error.message, 500));
+		res.status(500).json({ message: error.message });
 	}
 };
 
-exports.findOne = async (req, res, next) => {
+exports.findOne = async (req, res) => {
 	try {
-		const user = await userService.findUserById(req.params.id);
-		if (!user) {
-			return next(new AppError("User not found with that ID", 404));
+		const userId = req.params.id;
+		const user = await userService.findUserById(userId);
+
+		if (user) {
+			res.status(200).json({
+				status: "ok",
+				statusCode: 200,
+				message: "Data pengguna berhasil diambil",
+				data: user,
+			});
+		} else {
+			res.status(404).json({
+				message: `Pengguna dengan id=${userId} tidak ditemukan.`,
+			});
 		}
-		res.status(200).json(user);
 	} catch (error) {
-		next(new AppError(error.message, 500));
+		res.status(500).json({ message: error.message });
 	}
 };
 
-exports.update = async (req, res, next) => {
+exports.update = async (req, res) => {
 	try {
 		const userId = req.params.id;
 		const updateData = req.body;
 		const updatedUser = await userService.updateUser(userId, updateData);
-		res.status(200).json(updatedUser);
+
+		res.status(200).json({
+			status: "ok",
+			statusCode: 200,
+			message: "Data pengguna berhasil diubah",
+			data: updatedUser,
+		});
 	} catch (error) {
-		next(new AppError(error.message, 404));
+		res.status(404).json({ message: error.message });
 	}
 };
 
-exports.delete = async (req, res, next) => {
+exports.delete = async (req, res) => {
 	try {
 		const userId = req.params.id;
+
 		await userService.deleteUser(userId);
-		res.status(204).send();
+
+		res.status(200).json({
+			status: "ok",
+			statusCode: 200,
+			message: "Data pengguna berhasil dihapus",
+		}); // 204 No Content adalah respons standar untuk delete yang sukses
 	} catch (error) {
-		next(new AppError(error.message, 404));
+		res.status(404).json({ message: error.message });
 	}
 };

@@ -1,4 +1,4 @@
-const Joi = require("joi");
+// middlewares/validateRequest.js
 const validateRequest = (schema, property = "body") => {
 	return (req, res, next) => {
 		const { error } = schema.validate(req[property], {
@@ -17,4 +17,5 @@ const validateRequest = (schema, property = "body") => {
 		return next();
 	};
 };
+
 module.exports = validateRequest;

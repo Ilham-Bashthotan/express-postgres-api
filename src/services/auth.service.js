@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const { User } = require("../models");
 
-const { User } = require("../models"); // Asumsi model diimpor dengan benar
 exports.loginUser = async (email, password) => {
 	const user = await User.findOne({ where: { email } });
 	if (!user) {
@@ -13,7 +13,7 @@ exports.loginUser = async (email, password) => {
 		throw new Error("Authentication failed. Invalid credentials.");
 	}
 
-	const payload = { userId: user.id }; // Tambahkan data non-sensitif lain jika perlu
+	const payload = { userId: user.id, role: user.role }; // Tambahkan data non-sensitif lain jika perlu
 	const token = jwt.sign(payload, process.env.JWT_SECRET, {
 		expiresIn: "1h",
 	});

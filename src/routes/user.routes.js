@@ -1,18 +1,25 @@
 const express = require("express");
+const userController = require("../controllers/user.controller");
 const { authenticate } = require("../middlewares/auth.middleware");
 const { authorize } = require("../middlewares/rbac.middleware");
-const userController = require("../controllers/user.controller");
+const validateRequest = require("../middlewares/validate-request.middleware");
+const { createUserSchema } = require("../validators/user.schema");
 const router = express.Router();
 
-router.post("/", userController.create);
-router.get("/", userController.findAll);
+router.post(
+	"/",
+	authenticate,
+	authorize(["user", "admin"]),
+	validateRequest(createUserSchema),
+	userController.create
+);
+router.get("/", authenticate, userController.findAll);
 router.get("/:id", userController.findOne);
 router.put("/:id", userController.update);
-// Hanya admin yang bisa menghapus pengguna
 router.delete(
 	"/:id",
-	authenticate, // 1. Apakah pengguna sudah login?
-	authorize(["admin"]), // 2. Apakah pengguna memiliki peran 'admin'?
+	authenticate,
+	authorize(["admin", "user"]),
 	userController.delete
 );
 
