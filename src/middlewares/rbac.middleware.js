@@ -1,4 +1,4 @@
-const AppError = require("../utils/AppError"); // Akan dibuat di Bab 10
+const AppError = require("../utils/AppError");
 
 const authorize = (requiredRoles) => {
 	return (req, res, next) => {
@@ -7,12 +7,12 @@ const authorize = (requiredRoles) => {
 
 		if (!requiredRoles.includes(role)) {
 			// Teruskan error ke error handler terpusat
-			return res.status(403).json({
-				status: "fail",
-				statusCode: 403,
-				message:
+			return next(
+				new AppError(
 					"Akses ditolak. Anda tidak memiliki izin untuk mengakses resource ini.",
-			});
+					403
+				)
+			);
 		}
 
 		next();

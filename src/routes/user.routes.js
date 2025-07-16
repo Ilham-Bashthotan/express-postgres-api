@@ -4,15 +4,12 @@ const { authenticate } = require("../middlewares/auth.middleware");
 const { authorize } = require("../middlewares/rbac.middleware");
 const validateRequest = require("../middlewares/validate-request.middleware");
 const { createUserSchema } = require("../validators/user.schema");
+const regriterController = require("../controllers/regriter.controller");
 const router = express.Router();
 
-router.post(
-	"/",
-	authenticate,
-	authorize(["user", "admin"]),
-	validateRequest(createUserSchema),
-	userController.create
-);
+router.post("/", validateRequest(createUserSchema), userController.create);
+// Register endpoint
+router.post("/register", regriterController.register);
 router.get("/", authenticate, userController.findAll);
 router.get("/:id", userController.findOne);
 router.put("/:id", userController.update);

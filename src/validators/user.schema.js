@@ -2,13 +2,6 @@ const Joi = require("joi");
 
 // Schema untuk create user
 const createUserSchema = Joi.object({
-	name: Joi.string().min(2).max(50).required().messages({
-		"string.empty": "Nama tidak boleh kosong",
-		"string.min": "Nama minimal 2 karakter",
-		"string.max": "Nama maksimal 50 karakter",
-		"any.required": "Nama wajib diisi",
-	}),
-
 	email: Joi.string().email().required().messages({
 		"string.email": "Format email tidak valid",
 		"string.empty": "Email tidak boleh kosong",
